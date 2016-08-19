@@ -7,7 +7,8 @@ ffi.cdef("""
       char*** data;
       long size;
     } fdtdres;
-    void* runfdtd(int(*)(int, int));
+
+    void* runfdtd(int(*)(fdtdres*));
     void join(void* thread);
 """)
 
@@ -15,10 +16,11 @@ ffi.cdef("""
 
 C = ffi.dlopen("./spam.so")
 
-@ffi.callback("int(int, int)")
-def add(x, y):
-   print "made it to function"
-   return x + y
+@ffi.callback("int(fdtdres*)")
+def add(x):
+   print "Now update the webpage with this data"
+   #time.sleep(5)
+   return 0
 
 toyfdtd = C.runfdtd(add)
 C.join(toyfdtd)

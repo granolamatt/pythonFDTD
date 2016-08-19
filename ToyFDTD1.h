@@ -5,8 +5,10 @@
 
 
 typedef struct fdtdres {
-	char*** data;
-	long size;
+	int* data;
+	int x;
+	int y;
+	int z;
 } fdtdres;
 
 class ToyFDTD : public gm::Thread {
@@ -20,7 +22,7 @@ public:
         python_callback = func;
     }
 private:
-	std::function <int (int first, int second)>python_callback;
+	std::function <int (fdtdres* res)>python_callback;
 
 };
 
@@ -29,7 +31,7 @@ private:
 extern "C" {
 #endif
 
-void* runfdtd(int(*fn)(int, int));
+void* runfdtd(int(*fn)(fdtdres*));
 void join(void* thread);
 //int reduce(int(*fn)(int, int), int* lst, int len);
 

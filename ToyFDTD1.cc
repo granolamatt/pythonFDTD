@@ -574,9 +574,11 @@ void ToyFDTD::run()
       //     file for this iteration:
 
       fdtdres result;
-      char data[nx+1][nx+1][nz];
-      result.size = nz*(ny+1)*(nx+1);
-      result.data = (char***)data;
+      result.x = nx + 1;
+      result.y = ny + 1;
+      result.z = nz;
+      int data[result.x * result.y * result.z];
+      result.data = data;
 
       for (k = 0; k < (nz); k++)
       {
@@ -584,10 +586,15 @@ void ToyFDTD::run()
         {
           for (i = 0; i < (nx + 1); i++)
           {
-            data[i][j][k] = (char)(127.0 + scalingValue * ez[i][j][k]);
+            int idx = k * result.z + j * result.y + i;
+            data[idx] = (char)(127.0 + scalingValue * ez[i][j][k]);
+            //data[i][j][k] = (char)(127.0 + scalingValue * ez[i][j][k]);
           }
         }
       }
+
+      int stat = python_callback(&result);
+
 
       // close the output file for this iteration:
       //fclose(openFilePointer);
@@ -792,9 +799,11 @@ void ToyFDTD::run()
   //     from zero through 254 and write them to the output
   //     file for this iteration:
   fdtdres result;
-  char data[nx+1][nx+1][nz];
-  result.size = nz*(ny+1)*(nx+1);
-  result.data = (char***)data;
+  result.x = nx + 1;
+  result.y = ny + 1;
+  result.z = nz;
+  int data[result.x * result.y * result.z];
+  result.data = data;
 
   for (k = 0; k < (nz); k++)
   {
@@ -802,12 +811,16 @@ void ToyFDTD::run()
     {
       for (i = 0; i < (nx + 1); i++)
       {
-        data[i][j][k] = (char)(127.0 + scalingValue * ez[i][j][k]);
+        int idx = k * result.z + j * result.y + i;
+        data[idx] = (char)(127.0 + scalingValue * ez[i][j][k]);
+        //data[i][j][k] = (char)(127.0 + scalingValue * ez[i][j][k]);
         // putc((int)(127.0 +
         //            scalingValue * ez[i][j][k]), openFilePointer);
       }
     }
   }
+
+  int stat = python_callback(&result);
 
   // close the output file for this iteration:
   //fclose(openFilePointer);
@@ -871,7 +884,7 @@ void ToyFDTD::run()
 
 //static ToyFDTD *fdtd = NULL;
 
-void* runfdtd(int(*fn)(int, int)) {
+void* runfdtd(int(*fn)(fdtdres*)) {
 
   ToyFDTD* fdtd = new ToyFDTD();
   fdtd->setPythonCallback(fn);
