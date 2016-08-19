@@ -1,9 +1,9 @@
 from distutils.core import setup, Extension
 
-module1 = Extension('spam',
-                    sources = ['spam.c'])
+module1 = Extension('pythonFDTD',
+                    sources = ['pythonFDTD.cc'])
 
-setup (name = 'spam',
+setup (name = 'pythonFDTD',
        version = '1.0',
-       description = 'This is a demo package',
+       description = 'This is a c++ workflow demo',
        ext_modules = [module1])
